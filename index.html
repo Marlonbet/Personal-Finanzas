@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor Financiero</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <button class="menu-btn" onclick="toggleMenu()">☰ Menú</button>
+            <h1>Home</h1>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <section class="section">
+            <h2>Calculadora Financiera</h2>
+            <div class="calculator">
+                <input type="text" id="calc-display" readonly>
+                <button class="calc-btn" onclick="clearDisplay()">C</button>
+                <button class="calc-btn operator" onclick="appendToDisplay('%')">%</button>
+                <button class="calc-btn operator" onclick="appendToDisplay('/')">/</button>
+                <button class="calc-btn operator" onclick="appendToDisplay('*')">×</button>
+                <button class="calc-btn" onclick="appendToDisplay('7')">7</button>
+                <button class="calc-btn" onclick="appendToDisplay('8')">8</button>
+                <button class="calc-btn" onclick="appendToDisplay('9')">9</button>
+                <button class="calc-btn operator" onclick="appendToDisplay('-')">-</button>
+                <button class="calc-btn" onclick="appendToDisplay('4')">4</button>
+                <button class="calc-btn" onclick="appendToDisplay('5')">5</button>
+                <button class="calc-btn" onclick="appendToDisplay('6')">6</button>
+                <button class="calc-btn operator" onclick="appendToDisplay('+')">+</button>
+                <button class="calc-btn" onclick="appendToDisplay('1')">1</button>
+                <button class="calc-btn" onclick="appendToDisplay('2')">2</button>
+                <button class="calc-btn" onclick="appendToDisplay('3')">3</button>
+                <button class="calc-btn equal" onclick="calculate()">=</button>
+                <button class="calc-btn zero" onclick="appendToDisplay('0')">0</button>
+                <button class="calc-btn" onclick="appendToDisplay('.')">.</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal de Notas -->
+    <div class="modal-overlay" id="notesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Notas con Recordatorios</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="notes-container">
+                    <textarea id="new-note" placeholder="Escribe una nueva nota..."></textarea>
+                    <div class="reminder-controls">
+                        <label class="reminder-toggle">
+                            <input type="checkbox" id="reminder-toggle" onclick="toggleReminderPopup()"> ¿Agregar recordatorio?
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" onclick="addNote()">Agregar Nota</button>
+                    <div id="notes-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup de Recordatorio -->
+    <div class="reminder-popup" id="reminderPopup">
+        <div class="reminder-popup-content">
+            <h3>Configurar Recordatorio</h3>
+            <div class="datetime-inputs">
+                <input type="date" id="reminder-date" min="">
+                <input type="time" id="reminder-time">
+            </div>
+            <div class="popup-buttons">
+                <button class="btn btn-secondary" onclick="cancelReminder()">Cancelar</button>
+                <button class="btn btn-primary" onclick="setReminder()">Establecer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
