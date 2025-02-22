@@ -1,12 +1,6 @@
-// Solicitar permiso para notificaciones al cargar la página
-document.addEventListener('DOMContentLoaded', () => {
-    if (Notification.permission !== 'granted') {
-        Notification.requestPermission();
-    }
-});
-
 // Variables globales
 let notes = JSON.parse(localStorage.getItem('notes')) || [];
+let history = JSON.parse(localStorage.getItem('calcHistory')) || [];
 let currentReminder = null;
 
 // Funcionalidad del Modal
@@ -84,12 +78,14 @@ function clearDisplay() {
 
 function calculate() {
     try {
-        const result = eval(display.value);
+        const operation = display.value;
+        const result = eval(operation);
         if (isNaN(result) || !isFinite(result)) {
             throw new Error('Invalid operation');
         }
         display.value = result;
         display.classList.remove('error');
+        addToHistory(operation, result);
     } catch (error) {
         display.value = 'Error';
         display.classList.add('error');
@@ -98,6 +94,55 @@ function calculate() {
             clearDisplay();
         }, 1500);
     }
+}
+
+// Historial de operaciones
+function addToHistory(operation, result) {
+    history.unshift({
+        operation,
+        result,
+        timestamp: new Date().toLocaleString()
+    });
+    
+    if (history.length > 50) {
+        history = history.slice(0, 50);
+    }
+    
+    localStorage.setItem('calcHistory', JSON.stringify(history));
+    renderHistory();
+}
+
+function renderHistory() {
+    const historyList = document.getElementById('history-list');
+    if (historyList) {
+        historyList.innerHTML = history.map((item, index) => `
+            <div class="history-item">
+                <span class="history-operation">${item.operation} =</span>
+                <span class="history-result">${item.result}</span>
+                <small class="history-timestamp">${item.timestamp}</small>
+                <button class="history-use-btn" onclick="useHistory(${index})">Usar</button>
+            </div>
+        `).join('');
+    }
+}
+
+function useHistory(index) {
+    if (history[index]) {
+        display.value = history[index].operation;
+    }
+}
+
+function clearHistory() {
+    if (confirm('¿Estás seguro de querer borrar todo el historial?')) {
+        history = [];
+        localStorage.removeItem('calcHistory');
+        renderHistory();
+    }
+}
+
+function toggleHistory() {
+    const historyPopup = document.getElementById('historyPopup');
+    historyPopup.style.display = historyPopup.style.display === 'flex' ? 'none' : 'flex';
 }
 
 // Funcionalidad de notas
@@ -161,7 +206,31 @@ function showNotification(text) {
     if (Notification.permission === 'granted') {
         new Notification('Recordatorio de nota', {
             body: text,
-            icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAFASURBVHgB7ZbBDcIwDEVzQAfoAN0AMgIbdAPoBpANoCNAN4CO0BFgA9iADchHvqo4kqGx/1j5kpNYerL8EwXGGGOMMcYYY4wxk5EAHIAF2IDjJj5xL8c+Q4l6wA1YgZxJ5n0c+4Qc9YAXsGbyRdzDsXcU0QN4A3smX8Q9HHtFjmrAB3hm8kXcw7FX5GgGfIBXJl/EPRx7RY5qwBd4Z/JF3MOxV+SoBvyAdyZfxD0ce0WOasAfeGfyRdzDsVfkqAbcgHcmX8Q9HHtFjmrAA3hn8kXcw7FX5GgG3IBPJl/EPRx7RY5mwBV4ZfJF3MOxV+SoBvyBdyZfxD0ce0WOasADeGXyRdzDsVfkqAY8gHcmX8Q9HHtFjmrAC/hk8kXcw7FX5GgG3IF3Jl/EPRx7RY5qwA14ZvJF3MOxV+SoBtyBRyZfxD0ce0WOasADeGbyRdzDsVfkqAY8gVcmX8Q9HHtFjmrAA3hk8kXcw7FX5KgG3IFnJl/EPRx7RY5qwB14ZfJF3MOxV+SoBtyAVyZfxD0ce0WOasANeGfyRdzDsVfkqAbcgHcmX8Q9HHtFjmrADXhn8kXcw7FX5KgG3IBPJl/EPRx7RY5qwB/wDx+XHw3yF5S+AAAAAElFTkSuQmCC'
+            icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAFASURBVHgB7ZbBDcIwDEVzQAfoAN0AMgIbdAPoBpANoCNAN4CO0BFgA9iADchHvqo4kqGx/1j5kpNYerL8EwXGGGOMMcYYY4wxk5EAHIAF2IDjJj5xL8c+Q4l6wA1YgZxJ5n0c+4Qc9YAXsGbyRdzDsXcU0QN4A3smX8Q9HHtFjmrAB3hm8kXcw7FX5GgGfIBXJl/EPRx7RY5qwBd4Z/JF3MOxV+SoBvyAdyZfxD0ce0WOasAfeGfyRdzDsVfkqAbcgHcmX8Q9HHtFjmrAA3hn8kXcw7FX5GgG3IBPJl/EPRx7RY5mwBV4ZfJF3MOxV+SoBvyBdyZfxD0ce0WOasADeGXyRdzDsVfkqAY8gHcmX8Q9HHtFjmrAC/hk8kXcw7FX5GgG3IF3Jl/EPRx7RY5qwA14ZfJF3MOxV+SoBtyBRyZfxD0ce0WOasANeGfyRdzDsVfkqAbcgHcmX8Q9HHtFjmrADXhn8kXcw7FX5KgG3IBPJl/EPRx7RY5qwB/wDx+XHw3yF5S+AAAAAElFTkSuQmCC'
+        });
+    }
+}
+
+// Registro del Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+                console.log('ServiceWorker registrado con éxito:', registration.scope);
+            })
+            .catch(err => {
+                console.log('Error al registrar ServiceWorker:', err);
+            });
+    });
+}
+
+// Solicitar permiso para notificaciones
+function requestNotificationPermission() {
+    if (Notification.permission === 'default') {
+        Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+                console.log('Permiso para notificaciones concedido');
+            }
         });
     }
 }
@@ -170,12 +239,16 @@ function showNotification(text) {
 window.addEventListener('click', (event) => {
     const modal = document.getElementById('notesModal');
     const popup = document.getElementById('reminderPopup');
+    const historyPopup = document.getElementById('historyPopup');
     
     if (event.target === modal) {
         closeModal();
     }
     if (event.target === popup) {
         cancelReminder();
+    }
+    if (event.target === historyPopup) {
+        toggleHistory();
     }
 });
 
@@ -185,6 +258,8 @@ document.addEventListener('keydown', (e) => {
             cancelReminder();
         } else if (document.getElementById('notesModal').style.display === 'block') {
             closeModal();
+        } else if (document.getElementById('historyPopup').style.display === 'flex') {
+            toggleHistory();
         }
     }
     if (e.key === 'Enter') {
@@ -197,5 +272,11 @@ document.addEventListener('DOMContentLoaded', () => {
     renderNotes();
     checkReminders();
     clearDisplay();
+    renderHistory();
     setInterval(checkReminders, 60000);
+    requestNotificationPermission();
+    
+    window.addEventListener('appinstalled', () => {
+        console.log('Aplicación instalada con éxito');
+    });
 });
