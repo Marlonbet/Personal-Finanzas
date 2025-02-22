@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestor Financiero</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2ecc71">
 </head>
 <body>
     <header class="header">
@@ -16,7 +18,10 @@
 
     <main class="main-container">
         <section class="section">
-            <h2>Calculadora Financiera</h2>
+            <div class="calculator-header">
+                <h2>Calculadora Financiera</h2>
+                <button class="history-btn" onclick="toggleHistory()">📜 Historial</button>
+            </div>
             <div class="calculator">
                 <input type="text" id="calc-display" readonly>
                 <button class="calc-btn" onclick="clearDisplay()">C</button>
@@ -75,6 +80,18 @@
                 <button class="btn btn-secondary" onclick="cancelReminder()">Cancelar</button>
                 <button class="btn btn-primary" onclick="setReminder()">Establecer</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Popup de Historial -->
+    <div class="history-popup" id="historyPopup">
+        <div class="history-popup-content">
+            <div class="history-header">
+                <h3>Historial de Operaciones</h3>
+                <button class="close-btn" onclick="toggleHistory()">&times;</button>
+            </div>
+            <div class="history-list" id="history-list"></div>
+            <button class="btn btn-secondary clear-history-btn" onclick="clearHistory()">Limpiar Historial</button>
         </div>
     </div>
 
