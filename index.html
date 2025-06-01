@@ -453,7 +453,7 @@
         // Confirmación antes de redirigir a la llamada
         document.querySelectorAll('.call-button').forEach(button => {
             button.addEventListener('click', function(e) {
-                if(!confirm('¿Estás listo para realizar la llamada de compra?\n\nRecuerda:\n1. No cierres la aplicación de teléfono\n2. Espera el SMS de confirmación')) {
+                if(!confirm('¿Estás listo para realizar la llamada de compra?\n\nRecuerda:\n1. Presiona el botón de llamar\n2. Espera el SMS de confirmación')) {
                     e.preventDefault();
                 }
             });
