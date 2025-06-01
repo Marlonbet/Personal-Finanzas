@@ -3,98 +3,444 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor Financiero</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2ecc71">
+    <title>Planes ETECSA</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        /* Modal de instrucciones obligatorio */
+        .instruction-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .instruction-modal-content {
+            background-color: #e31937;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: white;
+            color: #e31937;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background-color: #e31937;
+            color: white;
+            padding: 25px 20px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .header h1 {
+            margin-top: 0;
+            font-size: 28px;
+        }
+        
+        .main-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Sección de instrucciones más destacada */
+        .instructions {
+            background-color: #fff8e1;
+            border: 2px solid #ffc107;
+            padding: 25px;
+            margin-bottom: 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .instructions:before {
+            content: "⚠️ IMPORTANTE";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #ffc107;
+            color: #333;
+            padding: 3px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .instructions h3 {
+            color: #e31937;
+            margin-top: 5px;
+            font-size: 22px;
+        }
+        
+        .instructions ol {
+            padding-left: 25px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        .instructions li {
+            margin-bottom: 12px;
+            padding-left: 10px;
+        }
+        
+        .warning-box {
+            background: #e31937;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .warning-box span {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        
+        /* Sección de planes más destacada */
+        .plans-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 40px;
+        }
+        
+        .plan-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            width: 100%;
+            max-width: 320px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .plan-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+        }
+        
+        .plan-card h3 {
+            color: #e31937;
+            border-bottom: 2px solid #e31937;
+            padding-bottom: 12px;
+            margin-top: 0;
+            font-size: 22px;
+        }
+        
+        .plan-features {
+            margin: 25px 0;
+            padding: 0;
+        }
+        
+        .plan-features li {
+            margin-bottom: 12px;
+            list-style-type: none;
+            padding-left: 32px;
+            position: relative;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .plan-features li:before {
+            content: "✓";
+            color: #e31937;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .plan-price {
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin: 25px 0;
+            color: #e31937;
+        }
+        
+        .call-button {
+            display: block;
+            background-color: #e31937;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        
+        .call-button:hover {
+            background-color: #b8142c;
+            transform: scale(1.02);
+        }
+        
+        .call-notice {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            margin-top: 15px;
+            line-height: 1.4;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            font-size: 14px;
+            color: #666;
+            padding: 25px 20px;
+            border-top: 1px solid #ddd;
+            background: white;
+        }
+        
+        @media (max-width: 768px) {
+            .plans-container {
+                flex-direction: column;
+                align-items: center;
+                margin-top: 30px;
+            }
+            
+            .plan-card {
+                max-width: 100%;
+            }
+            
+            .instructions {
+                padding: 20px;
+            }
+            
+            .instruction-modal-content {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 20px 15px;
+                border-radius: 0;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .main-container {
+                padding: 15px;
+            }
+            
+            .instructions ol {
+                padding-left: 20px;
+                font-size: 15px;
+            }
+            
+            .plan-card {
+                padding: 20px;
+            }
+            
+            .plan-price {
+                font-size: 24px;
+            }
+            
+            .call-button {
+                padding: 12px;
+                font-size: 16px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header class="header">
-        <div class="header-content">
-            <button class="menu-btn" onclick="toggleMenu()">☰ Menú</button>
-            <h1>Home</h1>
-        </div>
-    </header>
-
-    <main class="main-container">
-        <section class="section">
-            <div class="calculator-header">
-                <h2>Calculadora Financiera</h2>
-                <button class="history-btn" onclick="toggleHistory()">📜 Historial</button>
+    <!-- Modal de instrucciones (obligatorio al entrar) -->
+    <div class="instruction-modal" id="instructionModal">
+        <div class="instruction-modal-content">
+            <button class="modal-close" id="closeModal">×</button>
+            <h2 style="margin-top: 0; color: white;">📢 Antes de continuar</h2>
+            <p style="font-size: 18px; line-height: 1.6;">Para comprar tu paquete de datos correctamente, es <strong>MUY IMPORTANTE</strong> que leas estas instrucciones:</p>
+            
+            <ol style="text-align: left; font-size: 16px; padding-left: 20px;">
+                <li>Selecciona el plan que deseas comprar</li>
+                <li>Haz clic en "Comprar Ahora"</li>
+                <li>Espera a que se abra la aplicación de teléfono</li>
+                <li>Presiona el botón de llamada (saldrá que está en proceso)</li>
+                <li>Espera el SMS que confirma tu compra (puede tardar unos minutos)</li>
+            </ol>
+            
+            <div style="background: white; color: #e31937; padding: 15px; border-radius: 8px; margin-top: 20px; font-weight: bold;">
+                ⚠️ No cierres la aplicación de teléfono hasta completar la llamada
             </div>
-            <div class="calculator">
-                <input type="text" id="calc-display" readonly>
-                <button class="calc-btn" onclick="clearDisplay()">C</button>
-                <button class="calc-btn operator" onclick="appendToDisplay('%')">%</button>
-                <button class="calc-btn operator" onclick="appendToDisplay('/')">/</button>
-                <button class="calc-btn operator" onclick="appendToDisplay('*')">×</button>
-                <button class="calc-btn" onclick="appendToDisplay('7')">7</button>
-                <button class="calc-btn" onclick="appendToDisplay('8')">8</button>
-                <button class="calc-btn" onclick="appendToDisplay('9')">9</button>
-                <button class="calc-btn operator" onclick="appendToDisplay('-')">-</button>
-                <button class="calc-btn" onclick="appendToDisplay('4')">4</button>
-                <button class="calc-btn" onclick="appendToDisplay('5')">5</button>
-                <button class="calc-btn" onclick="appendToDisplay('6')">6</button>
-                <button class="calc-btn operator" onclick="appendToDisplay('+')">+</button>
-                <button class="calc-btn" onclick="appendToDisplay('1')">1</button>
-                <button class="calc-btn" onclick="appendToDisplay('2')">2</button>
-                <button class="calc-btn" onclick="appendToDisplay('3')">3</button>
-                <button class="calc-btn equal" onclick="calculate()">=</button>
-                <button class="calc-btn zero" onclick="appendToDisplay('0')">0</button>
-                <button class="calc-btn" onclick="appendToDisplay('.')">.</button>
-            </div>
-        </section>
-    </main>
-
-    <!-- Modal de Notas -->
-    <div class="modal-overlay" id="notesModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Notas con Recordatorios</h2>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="notes-container">
-                    <textarea id="new-note" placeholder="Escribe una nueva nota..."></textarea>
-                    <div class="reminder-controls">
-                        <label class="reminder-toggle">
-                            <input type="checkbox" id="reminder-toggle" onclick="toggleReminderPopup()"> ¿Agregar recordatorio?
-                        </label>
-                    </div>
-                    <button class="btn btn-primary" onclick="addNote()">Agregar Nota</button>
-                    <div id="notes-list"></div>
-                </div>
-            </div>
+            
+            <button id="understandBtn" style="background: white; color: #e31937; border: none; padding: 12px 25px; border-radius: 30px; font-weight: bold; margin-top: 25px; font-size: 16px; cursor: pointer;">
+                Entendido, quiero continuar
+            </button>
         </div>
     </div>
 
-    <!-- Popup de Recordatorio -->
-    <div class="reminder-popup" id="reminderPopup">
-        <div class="reminder-popup-content">
-            <h3>Configurar Recordatorio</h3>
-            <div class="datetime-inputs">
-                <input type="date" id="reminder-date" min="">
-                <input type="time" id="reminder-time">
+    <div class="header">
+        <h1>Paquetes de Datos ETECSA</h1>
+        <p>Selecciona el plan que mejor se adapte a tus necesidades</p>
+    </div>
+    
+    <div class="main-container">
+        <!-- Instrucciones claras para el usuario -->
+        <div class="instructions">
+            <h3>📋 Cómo comprar tu plan correctamente:</h3>
+            <ol>
+                <li><strong>Selecciona</strong> el plan que deseas comprar de los que aparecen abajo</li>
+                <li><strong>Haz clic</strong> en el botón "Comprar Ahora" del plan elegido</li>
+                <li><strong>Espera</strong> a que se abra automáticamente la aplicación de teléfono con el código ya preparado</li>
+                <li><strong>Presiona el botón de llamada</strong> (verás que aparece "procesando" o similar)</li>
+                <li><strong>No cuelgues</strong> hasta que la llamada finalice por sí sola</li>
+                <li><strong>Espera</strong> el mensaje de texto (SMS) que confirma tu compra (puede tardar 2-3 minutos)</li>
+            </ol>
+            
+            <div class="warning-box">
+                <span>⚠️</span>
+                <div>NO CIERRES LA APLICACIÓN DE TELÉFONO HASTA QUE FINALICE LA LLAMADA AUTOMÁTICAMENTE</div>
             </div>
-            <div class="popup-buttons">
-                <button class="btn btn-secondary" onclick="cancelReminder()">Cancelar</button>
-                <button class="btn btn-primary" onclick="setReminder()">Establecer</button>
+        </div>
+        
+        <!-- Sección de planes más destacada -->
+        <div class="plans-container">
+            <!-- Plan 1 -->
+            <div class="plan-card">
+                <h3>Plan Básico</h3>
+                <ul class="plan-features">
+                    <li>4.5GB de datos móviles</li>
+                    <li>Válido por 30 días</li>
+                    <li>Velocidad 4G/LTE</li>
+                </ul>
+                <div class="plan-price">240 CUP</div>
+                <a href="tel:*133*1*4*1*1#" class="call-button">Comprar Ahora</a>
+                <p class="call-notice">Se marcará automáticamente:<br><strong>*133*1*4*1*1#</strong></p>
+            </div>
+            
+            <!-- Plan 2 -->
+            <div class="plan-card">
+                <h3>Plan Combinado 1</h3>
+                <ul class="plan-features">
+                    <li>2GB de datos móviles</li>
+                    <li>15 minutos a todas las redes</li>
+                    <li>20 SMS nacionales</li>
+                    <li>Válido por 30 días</li>
+                </ul>
+                <div class="plan-price">120 CUP</div>
+                <a href="tel:*133*1*4*2*1#" class="call-button">Comprar Ahora</a>
+                <p class="call-notice">Se marcará automáticamente:<br><strong>*133*1*4*2*1#</strong></p>
+            </div>
+            
+            <!-- Plan 3 -->
+            <div class="plan-card">
+                <h3>Plan Combinado 2</h3>
+                <ul class="plan-features">
+                    <li>4GB de datos móviles</li>
+                    <li>35 minutos a todas las redes</li>
+                    <li>40 SMS nacionales</li>
+                    <li>Válido por 30 días</li>
+                </ul>
+                <div class="plan-price">240 CUP</div>
+                <a href="tel:*133*1*4*3*1#" class="call-button">Comprar Ahora</a>
+                <p class="call-notice">Se marcará automáticamente:<br><strong>*133*1*4*3*1#</strong></p>
+            </div>
+            
+            <!-- Plan 4 -->
+            <div class="plan-card">
+                <h3>Plan Premium</h3>
+                <ul class="plan-features">
+                    <li>6GB de datos móviles</li>
+                    <li>60 minutos a todas las redes</li>
+                    <li>70 SMS nacionales</li>
+                    <li>Válido por 30 días</li>
+                </ul>
+                <div class="plan-price">360 CUP</div>
+                <a href="tel:*133*1*4*4*1#" class="call-button">Comprar Ahora</a>
+                <p class="call-notice">Se marcará automáticamente:<br><strong>*133*1*4*4*1#</strong></p>
             </div>
         </div>
     </div>
-
-    <!-- Popup de Historial -->
-    <div class="history-popup" id="historyPopup">
-        <div class="history-popup-content">
-            <div class="history-header">
-                <h3>Historial de Operaciones</h3>
-                <button class="close-btn" onclick="toggleHistory()">&times;</button>
-            </div>
-            <div class="history-list" id="history-list"></div>
-            <button class="btn btn-secondary clear-history-btn" onclick="clearHistory()">Limpiar Historial</button>
-        </div>
+    
+    <div class="footer">
+        <p>Al hacer clic en "Comprar Ahora" se abrirá la aplicación de teléfono con el código de compra correspondiente.</p>
+        <p>© <span id="current-year"></span> Paquetes ETECSA - Todos los derechos reservados</p>
     </div>
 
-    <script src="main.js"></script>
+    <script>
+        // Añadir el año actual automáticamente
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Control del modal de instrucciones
+        const modal = document.getElementById('instructionModal');
+        const closeBtn = document.getElementById('closeModal');
+        const understandBtn = document.getElementById('understandBtn');
+        
+        // Mostrar modal al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+        
+        // Cerrar modal al hacer clic en el botón
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        closeBtn.addEventListener('click', closeModal);
+        understandBtn.addEventListener('click', closeModal);
+        
+        // Confirmación antes de redirigir a la llamada
+        document.querySelectorAll('.call-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                if(!confirm('¿Estás listo para realizar la llamada de compra?\n\nRecuerda:\n1. No cierres la aplicación de teléfono\n2. Espera el SMS de confirmación')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
