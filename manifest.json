@@ -1,0 +1,21 @@
+{
+  "name": "Paquetes ETECSA",
+  "short_name": "ETEClick",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#e31937",
+  "theme_color": "#e31937",
+  "description": "Compra fácil de paquetes de datos ETECSA",
+  "icons": [
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
